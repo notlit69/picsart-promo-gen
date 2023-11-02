@@ -12,4 +12,4 @@
 (.) Added capmonster support but I don't advise using it because it have really bad captcha score and gives Bot Detected
 
 # Contact
-(.) discord : notlit1#0 ( DONT DM FOR SUPPORT )
+(.) Discord : notlit1#0 ( DONT DM FOR SUPPORT )
