@@ -1,4 +1,5 @@
 {
-    "capsolver_key" : "",
-    "threads" : 10
+    "captcha_key" : "",
+    "service" : "capsolver.com",
+    "threads" : 100
 }

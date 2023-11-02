@@ -1,11 +1,12 @@
 from tasks import *
 from traceback import print_exc
 from colorama import Fore
+import tls_client
 
 bad = Fore.RED+'[!] '+Fore.RESET
 good = Fore.GREEN+'[+] '+Fore.RESET
 
-def genr(key : str,proxy_:str,logr:Logger,lock) -> None:
+def genr(key : str,proxy_:str,logr:Logger,lock,service) -> None:
     session = tls_client.Session(
         client_identifier="chrome112",
         random_tls_extension_order=True
@@ -14,7 +15,7 @@ def genr(key : str,proxy_:str,logr:Logger,lock) -> None:
         proxy = f"http://{formatProxy(proxy_)}"
     else:
         proxy = None
-    captcha = solve(key)
+    captcha = solve(key,service)
     
     if not captcha.get('solved'):
         captcha_excp = captcha.get('excp')
