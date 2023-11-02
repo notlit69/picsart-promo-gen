@@ -5,19 +5,20 @@ from colorama import Fore
 bad = Fore.RED+'[!] '+Fore.RESET
 good = Fore.GREEN+'[+] '+Fore.RESET
 
-def genr(key : str) -> None:
-    
-    session = session_()
-    try:
-        proxy = f"http://{GetProxy()}"
-    except:
+def genr(key : str,proxy_:str,logr:Logger,lock) -> None:
+    session = tls_client.Session(
+        client_identifier="chrome112",
+        random_tls_extension_order=True
+    )
+    if proxy_:
+        proxy = f"http://{formatProxy(proxy_)}"
+    else:
         proxy = None
-
     captcha = solve(key)
     
     if not captcha.get('solved'):
         captcha_excp = captcha.get('excp')
-        print(f"{bad}Failed to solve captcha! Error : {captcha_excp}")
+        logr.log(f"{bad}Failed to solve captcha! Error : {captcha_excp}")
         return
     
     gcap_resp = captcha.get('gcap')
@@ -54,7 +55,7 @@ def genr(key : str) -> None:
     try:
         sresp = session.post('https://api.picsart.com/user-account/auth/signup', headers=sheaders, json=sdata, proxy=proxy)
     except Exception as excp:
-        print(f"{bad}Failed To Do Request. Error : {str(excp)}")
+        logr.log(f"{bad}Failed To Do Request. Error : {str(excp)}")
         return
     
     sjson : dict = sresp.json()
@@ -65,13 +66,13 @@ def genr(key : str) -> None:
         sfailmsg = sjson.get('message')
 
         if 'Bot' in sfailmsg:
-            print(f'{bad}Bot Behaviour Detected!')
+            logr.log(f'{bad}Bot Behaviour Detected!')
         else:
-            print(f'{bad}Signup Failed! Message : {sfailmsg}')
+            logr.log(f'{bad}Signup Failed! Message : {sfailmsg}')
 
         return
-    
     access_token = sjson['token']['access_token']
+    api_key = sjson['key']
 
     pheaders = {
     'accept': '*/*',
@@ -91,13 +92,13 @@ def genr(key : str) -> None:
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-site',
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.76',
-    'x-api-key': '796e3b99-9bc0-4ec2-8a74-e7eaf0fbfa68',
+    'x-api-key': api_key,
 }
 
     try:
         presp = session.get('https://api.picsart.com/discord/link', headers=pheaders, proxy=proxy)
     except Exception as excp:
-        print(f"{bad}Failed To Do Request. Error : {str(excp)}")
+        logr.log(f"{bad}Failed To Do Request. Error : {str(excp)}")
         return
 
     pjson : dict = presp.json()
@@ -106,17 +107,17 @@ def genr(key : str) -> None:
 
     if pstatus == 'success':
         plink = pjson.get('response')
-        print(f"{good}Successfully Generated Promo -> {mail}:{passw}")
-        with open('promos.txt','a') as fl:
-            fl.write(f"{plink}\n")   
+        logr.log(f"{good}Successfully Generated Promo -> {mail}:{passw}")
+        with lock:
+            open('promos.txt','a').write(f"{plink}\n")  
 
     else:
-        print(f"{bad}Unknown Error While Claiming Promo. Response : {pjson}")
+        logr.log(f"{bad}Unknown Error While Claiming Promo. Response : {pjson}")
 
-def genr_(key:str):
+def genr_(*args):
     while True:
         try:
-            genr(key)
+            genr(*args)
         except:
             print_exc()
             continue

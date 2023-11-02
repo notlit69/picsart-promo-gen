@@ -8,8 +8,7 @@ def solve(clientkey:str) -> dict:
     "type": "ReCaptchaV3M1TaskProxyLess",
     "websiteURL": "https://picsart.com",
     "websiteKey": "6LdM2s8cAAAAAN7jqVXAqWdDlQ3Qca88ke3xdtpR",
-    "pageAction" : 'signup',
-    "timeout" : 10
+    "pageAction" : 'signup'
 })
     except Exception as excp:
         return {
@@ -35,16 +34,8 @@ def rnd_email() -> str:
 def rnd_passw() -> str:
     return rnd_letters(8) + rnd_digits(5)
 
-def session_() -> tls_client.Session:
-    return tls_client.Session(
-        client_identifier="chrome112",
-        random_tls_extension_order=True
-    )
-
 # https://github.com/Switch3301/Xbox-Bins-Gen/blob/main/main.py#L106
-def GetProxy() -> str:
-    with open('proxies.txt', "r") as f:
-        proxy =  random.choice(f.readlines()).strip()
+def formatProxy(proxy) -> str:
     if '@' in proxy:
         return proxy
     elif len(proxy.split(':')) == 2:
@@ -55,6 +46,10 @@ def GetProxy() -> str:
         else:
             return ':'.join(proxy.split(':')[:2]) + '@' + ':'.join(proxy.split(':')[2:])    
 
-def load_config() -> dict:
-    return json.load(open('config.json'))
+class Logger:
+    def __init__(self,lock) -> None:
+        self.lock = lock
 
+    def log(self,msg:str):
+        with self.lock:
+            print(msg)
