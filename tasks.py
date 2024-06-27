@@ -97,7 +97,6 @@ def rnd_email() -> str:
 def rnd_passw() -> str:
     return rnd_letters(8) + rnd_digits(5)
 
-# https://github.com/Switch3301/Xbox-Bins-Gen/blob/main/main.py#L106
 def formatProxy(proxy) -> str:
     if '@' in proxy:
         return proxy
